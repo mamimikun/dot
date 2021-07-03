@@ -1,0 +1,16 @@
+#!/bin/bash
+# arg can either be inc or dec
+
+BVAL=$(cat /sys/class/backlight/intel_backlight/brightness)
+
+if [[ $(( $BVAL < 4648 )) && "$1" == "inc" ]]; then
+
+   BVAL=$(($BVAL + 83))
+
+elif [[ $(( $BVAL > 0 )) && "$1" == "dec" ]]; then
+
+   BVAL=$(($BVAL - 83))
+
+fi
+
+echo $BVAL > /sys/class/backlight/intel_backlight/brightness

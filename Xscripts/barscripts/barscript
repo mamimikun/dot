@@ -1,0 +1,83 @@
+#!/bin/bash
+
+speedcheck () {
+    cat /proc/net/dev | awk '{ if ($1 == "wlp1s0:") { printf "%.2fMb/%.2fMb", $2/(8*1024**2), $10/(8*1024**2)}}'
+}
+
+cpuusage () {
+    cat /proc/stat | awk '{ if ($1 == "cpu") { total = $2+$3+$4+$5+$6+$7+8; used = $2+$3+$4+$6+$7+8; printf "%.2f", used/total } }'
+}
+
+ramusage () {
+    printf $(free | awk '{if ($1 == "Mem:") { printf "%.1fG/%.1fG", $3/(1024**2), $2/(1024**2)} }')
+}
+
+cputemp () {
+    tf=/sys/class/thermal/thermal_zone2/temp
+    tfv=$(cat $tf)
+    awk -v tfv="$tfv" 'BEGIN{printf "%d°C", (tfv/1000)}'
+}
+
+diskusage () {
+    printf $(df -h | awk '{ if ($1 == "/dev/sda1") print $3 "/" $2}')
+}
+
+ipaddr () {
+    printf $(ip route | grep -m 1 -E -o "src [0-9]*.[0-9]*.[0-9]*.[0-9]*" | sed "s/src //g")
+}
+
+muted(){
+    amixer get Master | grep -E -o -e "\[(on|off)\]" -m 1 | awk '{if ($1 == "[on]") printf "U"; else if ($1 == "[off]") printf "M";}'
+}
+
+volume () {
+    amixer sget Master | grep -E -o -e "\[[0-9]+%\]" -m 1 | sed "s/[]%[]//g" | awk '{printf $1/100}'
+}
+
+timedate () {
+    td0=$(date "+%d/%m/%y")
+    td1=$(date "+%k:%M:%S")
+    printf "$td0 $td1"
+}
+
+brightness () {
+    bf=/sys/class/backlight/intel_backlight/brightness
+    mb=/sys/class/backlight/intel_backlight/max_brightness
+    bfv=$(cat $bf)
+    mbv=$(cat $mb)
+    awk -v mbv="$mbv" -v bfv="$bfv" 'BEGIN{printf "%.2f", (bfv/mbv)}'
+}
+
+power () {
+    fcf=/sys/class/power_supply/BAT1/charge_full
+    ccf=/sys/class/power_supply/BAT1/charge_now
+    fcfv=$(cat $fcf)
+    ccfv=$(cat $ccf)
+    awk -v fcfv="$fcfv" -v ccfv="$ccfv" 'BEGIN{printf "%.2f", (ccfv/fcfv)}'
+}
+
+charging () {
+    sf=/sys/class/power_supply/BAT1/status
+    sfv=$(cat $sf)
+    if [ $sfv = "Charging" ]
+    then
+	printf "C"
+    elif [ $sfv = "Discharging" ]
+    then
+	printf "D"
+    elif [ $sfv = "Full" ]
+    then
+	printf "F"
+    fi
+}
+
+printf " " && \
+#printf "(LNK " && speedcheck && printf ") " && \
+printf "(CPU " && cpuusage && printf "," && cputemp && printf ") " && \
+printf "(MEM " && ramusage && printf ") " && \
+printf "(DSK " && diskusage && printf ") " && \
+printf "(VOL " && muted && printf "," && volume && printf ") " && \
+printf "(LUM " && brightness && printf ") " && \
+printf "(BAT " && charging && printf "," && power && printf ") " && \
+printf "(" && timedate && printf ")" &&  \
+printf "\n"

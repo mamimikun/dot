@@ -1,0 +1,10 @@
+
+#!/bin/bash
+
+if [[ "$1" == "inc" ]] ; then
+   VOL="+5%" ;
+elif [[ "$1" == "dec" ]] ; then
+   VOL="-5%" ;
+fi
+
+pactl set-sink-volume 0 $VOL

@@ -1,0 +1,7 @@
+export XDG_SESSION_TYPE=X11
+
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS=@im=fcitx
+
+setxkbmap -layout us -variant intl -option ctrl:swapcaps
