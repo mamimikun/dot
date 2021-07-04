@@ -12,6 +12,7 @@ export PATH=$PATH:$HOME/altera/13.1chingon/quartus/bin
 export PATH=$PATH:$HOME/.gem/ruby/2.6.0/bin
 export PATH=$PATH:$HOME/.rvm/bin
 export PATH=$PATH:/opt/cisco/anyconnect/bin
+export PATH=$PATH:$HOME/Xscripts
 
 # dotfile management
 
