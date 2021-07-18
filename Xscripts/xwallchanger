@@ -1,3 +1,4 @@
+killall xwallpaper
 
 WALLDIR=/home/mauricio/wallpapers/
 FILENO=$(shuf -i 1-$(ls $WALLDIR | wc -l) -n 1)

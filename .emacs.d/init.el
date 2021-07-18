@@ -64,10 +64,21 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("bd7b7c5df1174796deefce5debc2d976b264585d51852c962362be83932873d9" default))
+ '(custom-safPe-themes
+   '("bd7b7c5df1174796deefce5debc2d976b264585d51852c962362be83932873d9"
+     default))
  '(package-selected-packages
-   '(rainbow-delimiters clojure-mode blacken flycheck elpy better-defaults py-autopep8 column-enforce-mode exwm pdf-tools slime magit neotree)))
+   '(rainbow-delimiters
+     clojure-mode blacken
+     flycheck elpy
+     better-defaults
+     py-autopep8
+     column-enforce-mode
+     exwm
+     pdf-tools
+     slime
+     magit
+     neotree)))
 
 ;; get rid of the toolbar and scrollbar bullshit
 (menu-bar-mode -1)
@@ -93,16 +104,34 @@
 ;; set f9 as neotree toggle
 (global-set-key [f9] 'neotree-toggle)
 
+;; get col numbers
+(column-number-mode)
+
+;; 80 columns
+(defun 80col-hook ()
+      (setq display-fill-column-indicator-column 80)
+      (display-fill-column-indicator-mode))
+      
+(add-hook 'prog-mode-hook '80col-hook)
+
+;; backup files in another directory
 (setq backup-directory-alist
       `(("." . "~/.emacstmp")))
 
+;; pdf-view-mode-hook stuff
 (add-hook 'pdf-view-mode-hook (lambda() (linum-mode -1)))
 (pdf-loader-install)
 
+;; scroll one line at a time (less "jumpy" than defaults)
+    
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
+(setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+(setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+(setq scroll-step 1) ;; keyboard scroll one line at a time
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; If you edit it by hand, you could mess it up, so be careful.      
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
